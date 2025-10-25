@@ -354,6 +354,7 @@ export interface NumberSelector {
 interface ObjectSelectorField {
   selector: Selector;
   label?: string;
+  description?: string;
   required?: boolean;
 }
 
