@@ -5,6 +5,7 @@ import type {
 import { ensureArray } from "../common/array/ensure-array";
 import { computeStateDomain } from "../common/entity/compute_state_domain";
 import { supportsFeature } from "../common/entity/supports-feature";
+import type { HaEntityPickerEntityFilterFunc } from "./entity";
 import type { CropOptions } from "../dialogs/image-cropper-dialog/show-image-cropper-dialog";
 import { isHelperDomain } from "../panels/config/helpers/const";
 import type { UiAction } from "../panels/lovelace/components/hui-action-editor";
@@ -219,16 +220,12 @@ export interface DurationSelector {
   } | null;
 }
 
-export interface Predicate<T> {
-  test(value: T): boolean;
-}
-
 interface EntitySelectorFilter {
   integration?: string;
   domain?: string | readonly string[];
   device_class?: string | readonly string[];
   supported_features?: number | [number];
-  predicate?: Predicate<HassEntity>;
+  func?: HaEntityPickerEntityFilterFunc;
 }
 
 export interface EntitySelector {
@@ -800,7 +797,7 @@ export const filterSelectorEntities = (
     device_class: filterDeviceClass,
     supported_features: filterSupportedFeature,
     integration: filterIntegration,
-    predicate: filterPredicate,
+    func: filterFunc,
   } = filterEntity;
 
   if (filterDomain) {
@@ -842,7 +839,7 @@ export const filterSelectorEntities = (
     return false;
   }
 
-  if (filterPredicate && !filterPredicate.test(entity)) {
+  if (filterFunc && !filterFunc(entity)) {
     return false;
   }
 
